@@ -15,7 +15,7 @@ class get_contours:
 	def __init__(self,
 				 img_path=None,
 				 out_path='.',
-				 shp_ground='./GroundingLine_Antarctica_v02.shp',
+				 shp_ground=None,
 				 corners=None):
 		self.img_path = img_path
 		self.out_path = out_path
@@ -42,7 +42,7 @@ class get_contours:
 
 		self.cropped_raster = self.raster.sel(y=slice(self.min_y, self.max_y), x=slice(self.min_x, self.max_x))
 		self.crop_tiff_path = '{}/cropped_{}'.format(self.out_path, os.path.basename(self.img_path))
-		self.cropped_raster.rio.to_raster(crop_tiff_path)
+		self.cropped_raster.rio.to_raster(self.crop_tiff_path)
 
 	def create_mask(self):
 		''' Mask land area from a vector file '''
@@ -62,7 +62,7 @@ class get_contours:
 		# geom = [shapes for shapes in vector.geometry]
 
 		# Rasterize vector using the shape and coordinate system of the raster
-		self.rasterized = features.rasterize(vector['geometry'].loc[vector.NAME == sea_id].to_list(),
+		self.rasterized = features.rasterize(self.vector['geometry'].loc[self.vector.NAME == sea_id].to_list(),
 											 out_shape=raster.shape,
 											 fill=0,
 											 out=None,
